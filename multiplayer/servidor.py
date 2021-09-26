@@ -31,6 +31,7 @@ while True:
 
         # Turno do servidor
         print('------------------')
+        board.print()
         nok = True
         while nok:
             row = int(input('Digite a linha:')) - 1

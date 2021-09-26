@@ -13,7 +13,7 @@ sock.connect(server_address)
 
 # Cria um tabuleiro de jogo vazio
 board = GameState()
-
+board.print()
 try:
 
     while True:
