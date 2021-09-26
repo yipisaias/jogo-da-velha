@@ -1,6 +1,21 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from tabuleiro import Tabuleiro
 
+
+def result(status):
+    if status == 1:
+        print("Parabéns! Você venceu!")
+        return True
+    elif status == 2:
+        print("Seu adversário venceu!")
+        return True
+    elif status == 9:
+        print("Jogo empatou")
+        return True
+
+    return False
+
+
 # Cria o socket TCP/IP
 serverSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -22,9 +37,10 @@ while True:
         # Cria um tabuleiro de jogo vazio
         tabuleiro = Tabuleiro()
 
-        # Turno do servidor
         print('------------------')
         tabuleiro.print()
+
+        # Turno do servidor
         nok = True
         while nok:
             row = int(input('Digite a linha:')) - 1
@@ -39,11 +55,12 @@ while True:
                 print('Linha ou coluna inválida. Tente novamente.')
 
         tabuleiro.print()
+
         # Envia o tabuleiro para o jogador
         connection.sendall(tabuleiro.save().encode('utf-8'))
 
         # Processa em loop
-        while True:
+        while tabuleiro.finish() == 0:
             print("Aguardando turno do adversário...")
 
             # Recebe a jogada do jogador
@@ -60,23 +77,12 @@ while True:
             print('O adversário jogou:')
             tabuleiro.print()
 
-            print('------------------')
-            status = tabuleiro.winner()
-            if status == 1:
-                print("Parabéns! Você venceu!")
+            # Verifica condicao de vitoria/derrota ou empate
+            if result(tabuleiro.finish()):
                 print('Encerrando o cliente')
-                nok = False
-            elif status == 2:
-                print("Seu adversário venceu!")
-                print('Encerrando o cliente')
-                nok = False
-            elif status == 9:
-                print("Jogo empatou")
-                print('Encerrando o cliente')
-                nok = False
                 break
-            else:
-                nok = True
+
+            nok = True
             while nok:
                 row = int(input('Digite a linha:')) - 1
                 col = int(input('Digite a coluna:')) - 1
@@ -87,26 +93,17 @@ while True:
                 except:
                     nok = True
                     print('Linha ou coluna inválida. Tente novamente.')
+
             tabuleiro.print()
-            status = tabuleiro.winner()
-            if status == 1:
-                connection.sendall(tabuleiro.save().encode('utf-8'))
-                print("Parabéns! Você venceu!")
-                print('Encerrando o cliente')
-                break
-            elif status == 2:
-                connection.sendall(tabuleiro.save().encode('utf-8'))
-                print("Seu adversário venceu!")
-                print('Encerrando o cliente')
-                break
-            elif status == 9:
-                connection.sendall(tabuleiro.save().encode('utf-8'))
-                print("Jogo empatou")
-                print('Encerrando o cliente')
-                break
+            print('------------------')
 
             # Envia o tabuleiro para o jogador
             connection.sendall(tabuleiro.save().encode('utf-8'))
+
+            # Verifica condicao de vitoria/derrota ou empate
+            if result(tabuleiro.finish()):
+                print('Encerrando o cliente')
+                break
 
     finally:
         # Clean up the connection

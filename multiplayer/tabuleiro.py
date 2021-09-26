@@ -59,9 +59,9 @@ class Tabuleiro:
             print('|{}|{}|{}|'.format(row[0].center(
                 3, ' '), row[1].center(3, ' '), row[2].center(3, ' ')))
             print("+---+---+---+")
-    # -------------------------------------------------
 
-    def winner(self):
+    # -------------------------------------------------
+    def finish(self):
         # checando linhas
         for i in range(3):
             if self.board[i][0] == 'x' and self.board[i][1] == 'x' and self.board[i][2] == 'x':
@@ -95,8 +95,8 @@ class Tabuleiro:
             return 9
         else:
             return 0
-    # -------------------------------------------------
 
+    # -------------------------------------------------
     def move(self, row, col, piece):
         """
         Faz uma jogada no tabuleiro, nas posições dadas.

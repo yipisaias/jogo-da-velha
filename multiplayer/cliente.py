@@ -2,6 +2,21 @@ from socket import socket, AF_INET, SOCK_STREAM
 import sys
 from tabuleiro import Tabuleiro
 
+
+def result(status):
+    if status == 1:
+        print("Seu adversário venceu!")
+        return True
+    elif status == 2:
+        print("Parabéns! Você venceu!")
+        return True
+    elif status == 9:
+        print("Jogo empatou")
+        return True
+
+    return False
+
+
 # Create a TCP/IP socket
 clientSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -15,8 +30,7 @@ clientSocket.connect(server_address)
 tabuleiro = Tabuleiro()
 tabuleiro.print()
 try:
-
-    while True:
+    while tabuleiro.finish() == 0:
         print("Aguardando turno do adversário...")
 
         # Recebe a jogada do servidor
@@ -27,24 +41,12 @@ try:
             print('O adversário jogou:')
             tabuleiro.print()
 
-            # Turno do cliente
-            print('------------------')
-            status = tabuleiro.winner()
-            if status == 1:
-                print("Seu adversário venceu!")
-                nok = False
+            # Verifica condicao de vitoria/derrota ou empate
+            if result(tabuleiro.finish()):
                 break
-            elif status == 2:
-                print("Parabéns! Você venceu!")
-                nok = False
-                break
-            elif status == 9:
-                print("Jogo empatou")
-                nok = False
-                break
-            else:
-                nok = True
 
+            # Turno do cliente
+            nok = True
             while nok:
                 row = int(input('Digite a linha:')) - 1
                 col = int(input('Digite a coluna:')) - 1
@@ -55,25 +57,20 @@ try:
                 except:
                     nok = True
                     print('Linha ou coluna inválida. Tente novamente.')
+
             tabuleiro.print()
-            status = tabuleiro.winner()
-            if status == 1:
-                tabuleiro.print()
-                print("Seu adversário venceu!")
-                break
-            elif status == 2:
-                tabuleiro.print()
-                print("Parabéns! Você venceu!")
-                break
-            elif status == 9:
-                tabuleiro.print()
-                print("Jogo empatou")
-                nok = False
-                break
+            print('------------------')
+
             # Envia o tabuleiro para o servidor
             clientSocket.sendall(tabuleiro.save().encode('utf-8'))
+
+            # Verifica condicao de vitoria/derrota ou empate
+            if result(tabuleiro.finish()):
+                break
+
         else:
             break
+
 finally:
     print('Encerrando o cliente')
     clientSocket.close()
