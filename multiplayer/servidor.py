@@ -69,10 +69,12 @@ while True:
             status = board.ganhou()
             if status == 1:
                 print("Jogador x ganhou")
+                board.print()
                 print('Encerrando o cliente')
                 nok = False
             elif status == 2:
                 print("Jogador o ganhou")
+                board.print()
                 print('Encerrando o cliente')
                 nok = False
             else:
@@ -90,14 +92,14 @@ while True:
             status = board.ganhou()
             if status == 1:
                 print("Jogador x ganhou")
+                board.print()
                 print('Encerrando o cliente')
                 break
             elif status == 2:
                 print("Jogador o ganhou")
+                board.print()
                 print('Encerrando o cliente')
                 break
-            print('Eu joguei:')
-            board.print()
 
             # Envia o tabuleiro para o jogador
             connection.sendall(board.save().encode('utf-8'))

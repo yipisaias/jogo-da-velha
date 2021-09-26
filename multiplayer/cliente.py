@@ -32,10 +32,14 @@ try:
             status = board.ganhou()
             if status == 1:
                 print("Jogador x ganhou")
+                board.print()
                 nok = False
+                break
             elif status == 2:
                 print("Jogador o ganhou")
+                board.print()
                 nok = False
+                break
             else:
                 nok = True
 
@@ -52,11 +56,11 @@ try:
             status = board.ganhou()
             if status == 1:
                 print("Jogador x ganhou")
-                print('Encerrando o cliente')
+                board.print()
                 break
             elif status == 2:
                 print("Jogador o ganhou")
-                print('Encerrando o cliente')
+                board.print()
                 break
             # Envia o tabuleiro para o servidor
             sock.sendall(board.save().encode('utf-8'))
