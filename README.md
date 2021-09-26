@@ -11,4 +11,6 @@ Necessário instalar a biblioteca numpy:
   pip install numpy
 ```
 
-Após isso, reiniciar a IDE e (com sorte) o jogo rodará em sua máquina :)
+Após isso, reiniciar a IDE e (com sorte) o jogo rodará em sua máquina :)<br/>
+<br/>
+Para gerar e rodar arquivos executáveis, siga as instruções do [PyInstaller](http://www.pyinstaller.org/)
