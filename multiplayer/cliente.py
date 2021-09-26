@@ -1,5 +1,4 @@
 from socket import socket, AF_INET, SOCK_STREAM
-import sys
 from tabuleiro import Tabuleiro
 
 
