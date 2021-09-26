@@ -59,7 +59,34 @@ class GameState:
             print('|{}|{}|{}|'.format(row[0].center(
                 3, ' '), row[1].center(3, ' '), row[2].center(3, ' ')))
             print("+---+---+---+")
+    # -------------------------------------------------
 
+    def ganhou(self):
+        # checando linhas
+        for i in range(3):
+            if self.board[i][0] == 'x' and self.board[i][1] == 'x' and self.board[i][2] == 'x':
+                return 1
+            if self.board[i][0] == 'o' and self.board[i][1] == 'o' and self.board[i][2] == 'o':
+                return 2
+
+        # checando colunas
+        for i in range(3):
+            if self.board[0][i] == 'x' and self.board[1][i] == 'x' and self.board[2][i] == 'x':
+                return 1
+            if self.board[0][i] == 'o' and self.board[1][i] == 'o' and self.board[2][i] == 'o':
+                return 2
+
+        # checando diagonais
+        if self.board[0][0] == 'x' and self.board[1][1] == 'x' and self.board[2][2] == 'x':
+            return 1
+        if self.board[0][2] == 'x' and self.board[1][1] == 'x' and self.board[2][0] == 'x':
+            return 1
+        if self.board[0][0] == 'o' and self.board[1][1] == 'o' and self.board[2][2] == 'o':
+            return 2
+        if self.board[0][2] == 'o' and self.board[1][1] == 'o' and self.board[2][0] == 'o':
+            return 2
+
+        return 0
     # -------------------------------------------------
     def move(self, row, col, piece):
         """

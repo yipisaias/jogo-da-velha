@@ -21,29 +21,47 @@ try:
 
         # Recebe a jogada do servidor
         data = sock.recv(1024)
-        board.restore(data.decode('utf-8'))
+        if data:
+            board.restore(data.decode('utf-8'))
 
-        print('O adversário jogou:')
-        board.print()
+            print('O adversário jogou:')
+            board.print()
 
-        # Turno do cliente
-        print('------------------')
-
-        nok = True
-        while nok:
-            row = int(input('Digite a linha:')) - 1
-            col = int(input('Digite a coluna:')) - 1
-
-            nok = False
-            try:
-                board.move(row, col, 'x')
-            except:
+            # Turno do cliente
+            print('------------------')
+            status = board.ganhou()
+            if status == 1:
+                print("Jogador x ganhou")
+                nok = False
+            elif status == 2:
+                print("Jogador o ganhou")
+                nok = False
+            else:
                 nok = True
-                print('Linha ou coluna inválida. Tente novamente.')
 
-        # Envia o tabuleiro para o servidor
-        sock.sendall(board.save().encode('utf-8'))
+            while nok:
+                row = int(input('Digite a linha:')) - 1
+                col = int(input('Digite a coluna:')) - 1
 
+                nok = False
+                try:
+                    board.move(row, col, 'x')
+                except:
+                    nok = True
+                    print('Linha ou coluna inválida. Tente novamente.')
+            status = board.ganhou()
+            if status == 1:
+                print("Jogador x ganhou")
+                print('Encerrando o cliente')
+                break
+            elif status == 2:
+                print("Jogador o ganhou")
+                print('Encerrando o cliente')
+                break
+            # Envia o tabuleiro para o servidor
+            sock.sendall(board.save().encode('utf-8'))
+        else:
+            break
 finally:
     print('Encerrando o cliente')
     sock.close()

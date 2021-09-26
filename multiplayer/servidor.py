@@ -31,7 +31,6 @@ while True:
 
         # Turno do servidor
         print('------------------')
-
         nok = True
         while nok:
             row = int(input('Digite a linha:')) - 1
@@ -40,12 +39,10 @@ while True:
             nok = False
             try:
                 board.move(row, col, 'o')
+
             except:
                 nok = True
                 print('Linha ou coluna inválida. Tente novamente.')
-
-        print('Eu joguei:')
-        board.print()
 
         # Envia o tabuleiro para o jogador
         connection.sendall(board.save().encode('utf-8'))
@@ -69,8 +66,17 @@ while True:
             board.print()
 
             print('------------------')
-
-            nok = True
+            status = board.ganhou()
+            if status == 1:
+                print("Jogador x ganhou")
+                print('Encerrando o cliente')
+                nok = False
+            elif status == 2:
+                print("Jogador o ganhou")
+                print('Encerrando o cliente')
+                nok = False
+            else:
+                nok = True
             while nok:
                 row = int(input('Digite a linha:')) - 1
                 col = int(input('Digite a coluna:')) - 1
@@ -81,7 +87,15 @@ while True:
                 except:
                     nok = True
                     print('Linha ou coluna inválida. Tente novamente.')
-
+            status = board.ganhou()
+            if status == 1:
+                print("Jogador x ganhou")
+                print('Encerrando o cliente')
+                break
+            elif status == 2:
+                print("Jogador o ganhou")
+                print('Encerrando o cliente')
+                break
             print('Eu joguei:')
             board.print()
 
