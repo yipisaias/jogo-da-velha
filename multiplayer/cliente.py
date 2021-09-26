@@ -17,21 +17,22 @@ board = GameState()
 try:
 
     while True:
+        print("Aguardando turno do adversário...")
 
         # Recebe a jogada do servidor
         data = sock.recv(1024)
         board.restore(data.decode('utf-8'))
 
-        print('O servidor jogou:')
+        print('O adversário jogou:')
         board.print()
 
-        print('Faça a sua jogada:')
+        # Turno do cliente
         print('------------------')
 
         nok = True
         while nok:
-            row = int(input('Digite a linha:'))
-            col = int(input('Digite a coluna:'))
+            row = int(input('Digite a linha:')) - 1
+            col = int(input('Digite a coluna:')) - 1
 
             nok = False
             try:

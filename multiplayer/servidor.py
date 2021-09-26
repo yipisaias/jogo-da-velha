@@ -1,8 +1,8 @@
-import socket
+from socket import socket, AF_INET, SOCK_STREAM
 from gamestate import GameState
 
 # Cria o socket TCP/IP
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock = socket(AF_INET, SOCK_STREAM)
 
 # Faz o bind no endereco e porta
 server_address = ('localhost', 5000)
@@ -13,17 +13,37 @@ sock.listen(1)
 
 while True:
 
-    print('Aguardando a conexao do jogador')
+    print('Aguardando a conexao do adversário')
     connection, client_address = sock.accept()
 
     try:
-        print('Jogador chegou! :)')
+        print('Adversário chegou! :)')
 
         # Cria um tabuleiro de jogo vazio
         board = GameState()
 
+        """
         # Faz uma jogada aleatoria
         board.moveRandom('o')
+        print('Eu joguei:')
+        board.print()
+        """
+
+        # Turno do servidor
+        print('------------------')
+
+        nok = True
+        while nok:
+            row = int(input('Digite a linha:')) - 1
+            col = int(input('Digite a coluna:')) - 1
+
+            nok = False
+            try:
+                board.move(row, col, 'o')
+            except:
+                nok = True
+                print('Linha ou coluna inválida. Tente novamente.')
+
         print('Eu joguei:')
         board.print()
 
@@ -32,22 +52,36 @@ while True:
 
         # Processa em loop
         while True:
+            print("Aguardando turno do adversário...")
+
             # Recebe a jogada do jogador
             data = connection.recv(1024)
 
             # Checa se a conexao do jogador foi terminada
             if not data:
-                print('Jogador se foi. :(')
+                print('Adversário se foi. :(')
                 break
 
             # Converte para string e restaura no tabuleiro
             board.restore(data.decode('utf-8'))
 
-            print('O jogador jogou:')
+            print('O adversário jogou:')
             board.print()
 
-            # Faz outra jogada aleatoria
-            board.moveRandom('o')
+            print('------------------')
+
+            nok = True
+            while nok:
+                row = int(input('Digite a linha:')) - 1
+                col = int(input('Digite a coluna:')) - 1
+
+                nok = False
+                try:
+                    board.move(row, col, 'o')
+                except:
+                    nok = True
+                    print('Linha ou coluna inválida. Tente novamente.')
+
             print('Eu joguei:')
             board.print()
 
