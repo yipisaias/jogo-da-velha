@@ -2,7 +2,7 @@ import numpy as np
 from random import *
 
 
-class GameState:
+class Tabuleiro:
     """
     Classe que representa o estado do jogo.
     """
@@ -61,7 +61,7 @@ class GameState:
             print("+---+---+---+")
     # -------------------------------------------------
 
-    def ganhou(self):
+    def winner(self):
         # checando linhas
         for i in range(3):
             if self.board[i][0] == 'x' and self.board[i][1] == 'x' and self.board[i][2] == 'x':

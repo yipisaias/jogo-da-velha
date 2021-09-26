@@ -1,37 +1,30 @@
 from socket import socket, AF_INET, SOCK_STREAM
-from gamestate import GameState
+from tabuleiro import Tabuleiro
 
 # Cria o socket TCP/IP
-sock = socket(AF_INET, SOCK_STREAM)
+serverSocket = socket(AF_INET, SOCK_STREAM)
 
 # Faz o bind no endereco e porta
 server_address = ('localhost', 5000)
-sock.bind(server_address)
+serverSocket.bind(server_address)
 
 # Fica ouvindo por conexoes
-sock.listen(1)
+serverSocket.listen(1)
 
 while True:
 
     print('Aguardando a conexao do adversário')
-    connection, client_address = sock.accept()
+    connection, client_address = serverSocket.accept()
 
     try:
         print('Adversário chegou! :)')
 
         # Cria um tabuleiro de jogo vazio
-        board = GameState()
-
-        """
-        # Faz uma jogada aleatoria
-        board.moveRandom('o')
-        print('Eu joguei:')
-        board.print()
-        """
+        tabuleiro = Tabuleiro()
 
         # Turno do servidor
         print('------------------')
-        board.print()
+        tabuleiro.print()
         nok = True
         while nok:
             row = int(input('Digite a linha:')) - 1
@@ -39,15 +32,15 @@ while True:
 
             nok = False
             try:
-                board.move(row, col, 'x')
+                tabuleiro.move(row, col, 'x')
 
             except:
                 nok = True
                 print('Linha ou coluna inválida. Tente novamente.')
 
-        board.print()
+        tabuleiro.print()
         # Envia o tabuleiro para o jogador
-        connection.sendall(board.save().encode('utf-8'))
+        connection.sendall(tabuleiro.save().encode('utf-8'))
 
         # Processa em loop
         while True:
@@ -62,19 +55,19 @@ while True:
                 break
 
             # Converte para string e restaura no tabuleiro
-            board.restore(data.decode('utf-8'))
+            tabuleiro.restore(data.decode('utf-8'))
 
             print('O adversário jogou:')
-            board.print()
+            tabuleiro.print()
 
             print('------------------')
-            status = board.ganhou()
+            status = tabuleiro.winner()
             if status == 1:
-                print("Jogador 1 ganhou")
+                print("Parabéns! Você venceu!")
                 print('Encerrando o cliente')
                 nok = False
             elif status == 2:
-                print("Jogador 2 ganhou")
+                print("Seu adversário venceu!")
                 print('Encerrando o cliente')
                 nok = False
             elif status == 9:
@@ -90,30 +83,30 @@ while True:
 
                 nok = False
                 try:
-                    board.move(row, col, 'x')
+                    tabuleiro.move(row, col, 'x')
                 except:
                     nok = True
                     print('Linha ou coluna inválida. Tente novamente.')
-            board.print()
-            status = board.ganhou()
+            tabuleiro.print()
+            status = tabuleiro.winner()
             if status == 1:
-                connection.sendall(board.save().encode('utf-8'))
-                print("Jogador 1 ganhou")
+                connection.sendall(tabuleiro.save().encode('utf-8'))
+                print("Parabéns! Você venceu!")
                 print('Encerrando o cliente')
                 break
             elif status == 2:
-                connection.sendall(board.save().encode('utf-8'))
-                print("Jogador 2 ganhou")
+                connection.sendall(tabuleiro.save().encode('utf-8'))
+                print("Seu adversário venceu!")
                 print('Encerrando o cliente')
                 break
             elif status == 9:
-                connection.sendall(board.save().encode('utf-8'))
+                connection.sendall(tabuleiro.save().encode('utf-8'))
                 print("Jogo empatou")
                 print('Encerrando o cliente')
                 break
 
             # Envia o tabuleiro para o jogador
-            connection.sendall(board.save().encode('utf-8'))
+            connection.sendall(tabuleiro.save().encode('utf-8'))
 
     finally:
         # Clean up the connection
