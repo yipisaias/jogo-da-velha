@@ -38,12 +38,13 @@ while True:
 
             nok = False
             try:
-                board.move(row, col, 'o')
+                board.move(row, col, 'x')
 
             except:
                 nok = True
                 print('Linha ou coluna inválida. Tente novamente.')
 
+        board.print()
         # Envia o tabuleiro para o jogador
         connection.sendall(board.save().encode('utf-8'))
 
@@ -68,15 +69,18 @@ while True:
             print('------------------')
             status = board.ganhou()
             if status == 1:
-                print("Jogador x ganhou")
-                board.print()
+                print("Jogador 1 ganhou")
                 print('Encerrando o cliente')
                 nok = False
             elif status == 2:
-                print("Jogador o ganhou")
-                board.print()
+                print("Jogador 2 ganhou")
                 print('Encerrando o cliente')
                 nok = False
+            elif status == 9:
+                print("Jogo empatou")
+                print('Encerrando o cliente')
+                nok = False
+                break
             else:
                 nok = True
             while nok:
@@ -85,19 +89,25 @@ while True:
 
                 nok = False
                 try:
-                    board.move(row, col, 'o')
+                    board.move(row, col, 'x')
                 except:
                     nok = True
                     print('Linha ou coluna inválida. Tente novamente.')
+            board.print()
             status = board.ganhou()
             if status == 1:
-                print("Jogador x ganhou")
-                board.print()
+                connection.sendall(board.save().encode('utf-8'))
+                print("Jogador 1 ganhou")
                 print('Encerrando o cliente')
                 break
             elif status == 2:
-                print("Jogador o ganhou")
-                board.print()
+                connection.sendall(board.save().encode('utf-8'))
+                print("Jogador 2 ganhou")
+                print('Encerrando o cliente')
+                break
+            elif status == 9:
+                connection.sendall(board.save().encode('utf-8'))
+                print("Jogo empatou")
                 print('Encerrando o cliente')
                 break
 

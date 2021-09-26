@@ -31,13 +31,15 @@ try:
             print('------------------')
             status = board.ganhou()
             if status == 1:
-                print("Jogador x ganhou")
-                board.print()
+                print("Jogador 1 ganhou")
                 nok = False
                 break
             elif status == 2:
-                print("Jogador o ganhou")
-                board.print()
+                print("Jogador 2 ganhou")
+                nok = False
+                break
+            elif status == 9:
+                print("Jogo empatou")
                 nok = False
                 break
             else:
@@ -49,18 +51,24 @@ try:
 
                 nok = False
                 try:
-                    board.move(row, col, 'x')
+                    board.move(row, col, 'o')
                 except:
                     nok = True
                     print('Linha ou coluna inválida. Tente novamente.')
+            board.print()
             status = board.ganhou()
             if status == 1:
-                print("Jogador x ganhou")
+                print("Jogador 1 ganhou")
                 board.print()
                 break
             elif status == 2:
-                print("Jogador o ganhou")
+                print("Jogador 2 ganhou")
                 board.print()
+                break
+            elif status == 9:
+                print("Jogo empatou")
+                board.print()
+                nok = False
                 break
             # Envia o tabuleiro para o servidor
             sock.sendall(board.save().encode('utf-8'))

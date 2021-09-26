@@ -86,8 +86,17 @@ class GameState:
         if self.board[0][2] == 'o' and self.board[1][1] == 'o' and self.board[2][0] == 'o':
             return 2
 
-        return 0
+        soma = 0
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j] == 'o' or self.board[i][j] == 'x':
+                    soma = soma + 1
+        if soma == 9:
+            return 9
+        else:
+            return 0
     # -------------------------------------------------
+
     def move(self, row, col, piece):
         """
         Faz uma jogada no tabuleiro, nas posições dadas.
