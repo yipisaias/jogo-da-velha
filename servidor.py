@@ -16,95 +16,106 @@ def result(status):
     return False
 
 
-# Cria o socket TCP/IP
-serverSocket = socket(AF_INET, SOCK_STREAM)
+def jogada(tabuleiro):
+    nok = True
+    while nok:
+        row = int(input('Digite a linha:')) - 1
+        col = int(input('Digite a coluna:')) - 1
 
-# Faz o bind no endereco e porta
-server_address = ('localhost', 5000)
-serverSocket.bind(server_address)
+        nok = False
+        try:
+            tabuleiro.move(row, col, 'x')
 
-# Fica ouvindo por conexoes
-serverSocket.listen(1)
-
-while True:
-
-    print('Aguardando a conexao do adversário')
-    connection, client_address = serverSocket.accept()
-
-    try:
-        print('Adversário chegou! :)')
-
-        # Cria um tabuleiro de jogo vazio
-        tabuleiro = Tabuleiro()
-
-        print('------------------')
-        tabuleiro.print()
-
-        # Turno do servidor
-        nok = True
-        while nok:
-            row = int(input('Digite a linha:')) - 1
-            col = int(input('Digite a coluna:')) - 1
-
-            nok = False
-            try:
-                tabuleiro.move(row, col, 'x')
-
-            except:
-                nok = True
-                print('Linha ou coluna inválida. Tente novamente.')
-
-        tabuleiro.print()
-
-        # Envia o tabuleiro para o jogador
-        connection.sendall(tabuleiro.save().encode('utf-8'))
-
-        # Processa em loop
-        while tabuleiro.finish() == 0:
-            print("Aguardando turno do adversário...")
-
-            # Recebe a jogada do jogador
-            data = connection.recv(1024)
-
-            # Checa se a conexao do jogador foi terminada
-            if not data:
-                print('Adversário se foi. :(')
-                break
-
-            # Converte para string e restaura no tabuleiro
-            tabuleiro.restore(data.decode('utf-8'))
-
-            print('O adversário jogou:')
-            tabuleiro.print()
-
-            # Verifica condicao de vitoria/derrota ou empate
-            if result(tabuleiro.finish()):
-                print('Encerrando o cliente')
-                break
-
+        except:
             nok = True
-            while nok:
-                row = int(input('Digite a linha:')) - 1
-                col = int(input('Digite a coluna:')) - 1
+            print('Linha ou coluna inválida. Tente novamente.')
 
-                nok = False
-                try:
-                    tabuleiro.move(row, col, 'x')
-                except:
-                    nok = True
-                    print('Linha ou coluna inválida. Tente novamente.')
 
-            tabuleiro.print()
+print("Qual jogador começa?")
+print("1. Eu")
+print("2. Meu adversário")
+quemComeca = int(input())
+while quemComeca != 1 and quemComeca != 2:
+    print('Opção inválida. Tente novamente.')
+    quemComeca = int(input())
+print()
+
+
+def servidor(player):
+    # Cria o socket TCP/IP
+    serverSocket = socket(AF_INET, SOCK_STREAM)
+
+    # Faz o bind no endereco e porta
+    server_address = ('localhost', 5000)
+    serverSocket.bind(server_address)
+
+    # Fica ouvindo por conexoes
+    serverSocket.listen(1)
+
+    while True:
+
+        print('Aguardando a conexao do adversário')
+        connection, client_address = serverSocket.accept()
+
+        try:
+            print('Adversário chegou! :)')
+
+            # Cria um tabuleiro de jogo vazio
+            tabuleiro = Tabuleiro()
+
             print('------------------')
+            tabuleiro.print()
 
-            # Envia o tabuleiro para o jogador
-            connection.sendall(tabuleiro.save().encode('utf-8'))
+            connection.sendall(''.join(str(player)).encode('utf-8'))
 
-            # Verifica condicao de vitoria/derrota ou empate
-            if result(tabuleiro.finish()):
-                print('Encerrando o cliente')
-                break
+            if player == 1:
+                # Turno do servidor
+                jogada(tabuleiro)
 
-    finally:
-        # Clean up the connection
-        connection.close()
+                tabuleiro.print()
+
+                # Envia o tabuleiro e qual player comeca para o jogador
+                connection.sendall(tabuleiro.save().encode('utf-8'))
+
+            # Processa em loop
+            while tabuleiro.finish() == 0:
+                print("Aguardando turno do adversário...")
+
+                # Recebe a jogada do jogador
+                data = connection.recv(1024)
+
+                # Checa se a conexao do jogador foi terminada
+                if not data:
+                    print('Adversário se foi. :(')
+                    break
+
+                # Converte para string e restaura no tabuleiro
+                tabuleiro.restore(data.decode('utf-8'))
+
+                print('O adversário jogou:')
+                tabuleiro.print()
+
+                # Verifica condicao de vitoria/derrota ou empate
+                if result(tabuleiro.finish()):
+                    print('Encerrando o cliente')
+                    break
+
+                jogada(tabuleiro)
+
+                tabuleiro.print()
+                print('------------------')
+
+                # Envia o tabuleiro para o jogador
+                connection.sendall(tabuleiro.save().encode('utf-8'))
+
+                # Verifica condicao de vitoria/derrota ou empate
+                if result(tabuleiro.finish()):
+                    print('Encerrando o cliente')
+                    break
+
+        finally:
+            # Clean up the connection
+            connection.close()
+
+
+servidor(quemComeca)

@@ -16,6 +16,21 @@ def result(status):
     return False
 
 
+def jogada(tabuleiro):
+    nok = True
+    while nok:
+        row = int(input('Digite a linha:')) - 1
+        col = int(input('Digite a coluna:')) - 1
+
+        nok = False
+        try:
+            tabuleiro.move(row, col, 'o')
+
+        except:
+            nok = True
+            print('Linha ou coluna inválida. Tente novamente.')
+
+
 # Create a TCP/IP socket
 clientSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -29,6 +44,16 @@ clientSocket.connect(server_address)
 tabuleiro = Tabuleiro()
 tabuleiro.print()
 try:
+    response = clientSocket.recv(1024).decode('utf-8')
+    if response == "2":
+        # Turno do cliente
+        jogada(tabuleiro)
+
+        tabuleiro.print()
+
+        # Envia o tabuleiro para o jogador
+        clientSocket.sendall(tabuleiro.save().encode('utf-8'))
+
     while tabuleiro.finish() == 0:
         print("Aguardando turno do adversário...")
 
@@ -45,17 +70,7 @@ try:
                 break
 
             # Turno do cliente
-            nok = True
-            while nok:
-                row = int(input('Digite a linha:')) - 1
-                col = int(input('Digite a coluna:')) - 1
-
-                nok = False
-                try:
-                    tabuleiro.move(row, col, 'o')
-                except:
-                    nok = True
-                    print('Linha ou coluna inválida. Tente novamente.')
+            jogada(tabuleiro)
 
             tabuleiro.print()
             print('------------------')
