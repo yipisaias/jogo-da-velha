@@ -67,6 +67,7 @@ try:
 
             # Verifica condicao de vitoria/derrota ou empate
             if result(tabuleiro.finish()):
+                input("Pressione qualquer tecla para sair...")
                 break
 
             # Turno do cliente
@@ -80,6 +81,7 @@ try:
 
             # Verifica condicao de vitoria/derrota ou empate
             if result(tabuleiro.finish()):
+                input("Pressione qualquer tecla para sair...")
                 break
 
         else:
