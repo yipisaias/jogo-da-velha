@@ -1,5 +1,4 @@
 from socket import socket, AF_INET, SOCK_STREAM
-import socket as sckt
 from tabuleiro import Tabuleiro
 from jogada import jogada, msgVitoria, msgDerrota
 from menu import menu
@@ -24,10 +23,8 @@ def servidor(player):
     # Cria o socket TCP/IP
     serverSocket = socket(AF_INET, SOCK_STREAM)
 
-    # Faz o bind no endereco e porta
-    hostname = sckt.gethostname()
-    hostIP = sckt.gethostbyname(hostname)
-    server_address = (hostIP, 5000)
+    # Faz o bind no endereco e porta para todos os enderecos IPv4 disponiveis no host
+    server_address = ('', 5000)
     serverSocket.bind(server_address)
 
     # Fica ouvindo por conexoes
@@ -56,7 +53,7 @@ def servidor(player):
 
                 tabuleiro.print()
 
-                # Envia o tabuleiro e qual player comeca para o jogador
+                # Envia o tabuleiro para o jogador
                 connection.sendall(tabuleiro.save().encode('utf-8'))
 
             # Processa em loop
