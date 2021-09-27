@@ -4,7 +4,9 @@ def menu(jogo):
         continuar = int(input("1. Novo jogo \n" +
                               "0. Sair \n"))
         print()
-        if continuar:
+        if continuar == 1:
             jogo()
-        else:
+        elif continuar == 0:
             print("Saindo...")
+        else:
+            print('Opção inválida. Tente novamente.')
