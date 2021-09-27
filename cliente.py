@@ -1,36 +1,11 @@
 from socket import socket, AF_INET, SOCK_STREAM
 import msvcrt
 from tabuleiro import Tabuleiro
+from jogada import jogada
 
 
-def result(status):
-    if status == 1:
-        print("Seu adversário venceu!")
-        return True
-    elif status == 2:
-        print("Parabéns! Você venceu!")
-        return True
-    elif status == 9:
-        print("Jogo empatou")
-        return True
-
-    return False
-
-
-def jogada(tabuleiro):
-    nok = True
-    while nok:
-        row = int(input('Digite a linha:')) - 1
-        col = int(input('Digite a coluna:')) - 1
-
-        nok = False
-        try:
-            tabuleiro.move(row, col, 'o')
-
-        except:
-            nok = True
-            print('Linha ou coluna inválida. Tente novamente.')
-
+msgVitoria = "Parabéns! Você venceu!"
+msgDerrota = "Seu adversário venceu!"
 
 # Create a TCP/IP socket
 clientSocket = socket(AF_INET, SOCK_STREAM)
@@ -48,7 +23,7 @@ try:
     response = clientSocket.recv(1024).decode('utf-8')
     if response == "2":
         # Turno do cliente
-        jogada(tabuleiro)
+        jogada(tabuleiro, 'o')
 
         tabuleiro.print()
 
@@ -67,13 +42,13 @@ try:
             tabuleiro.print()
 
             # Verifica condicao de vitoria/derrota ou empate
-            if result(tabuleiro.finish()):
+            if tabuleiro.result(tabuleiro.finish(), msgDerrota, msgVitoria):
                 print("Pressione qualquer tecla para sair...")
                 msvcrt.getch()
                 break
 
             # Turno do cliente
-            jogada(tabuleiro)
+            jogada(tabuleiro, 'o')
 
             tabuleiro.print()
             print('------------------')
@@ -82,7 +57,7 @@ try:
             clientSocket.sendall(tabuleiro.save().encode('utf-8'))
 
             # Verifica condicao de vitoria/derrota ou empate
-            if result(tabuleiro.finish()):
+            if tabuleiro.result(tabuleiro.finish(), msgDerrota, msgVitoria):
                 print("Pressione qualquer tecla para sair...")
                 msvcrt.getch()
                 break

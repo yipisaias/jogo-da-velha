@@ -1,34 +1,11 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from tabuleiro import Tabuleiro
+from jogada import jogada
+from menu import menu
 
 
-def result(status):
-    if status == 1:
-        print("Parabéns! Você venceu!")
-        return True
-    elif status == 2:
-        print("Seu adversário venceu!")
-        return True
-    elif status == 9:
-        print("Jogo empatou")
-        return True
-
-    return False
-
-
-def jogada(tabuleiro):
-    nok = True
-    while nok:
-        row = int(input('Digite a linha:')) - 1
-        col = int(input('Digite a coluna:')) - 1
-
-        nok = False
-        try:
-            tabuleiro.move(row, col, 'x')
-
-        except:
-            nok = True
-            print('Linha ou coluna inválida. Tente novamente.')
+msgVitoria = "Parabéns! Você venceu!"
+msgDerrota = "Seu adversário venceu!"
 
 
 def quemComeca():
@@ -41,18 +18,6 @@ def quemComeca():
         player = str(input())
     print()
     servidor(player)
-
-
-def menu():
-    continuar = 1
-    while continuar:
-        continuar = int(input("1. Novo jogo \n" +
-                              "0. Sair \n"))
-        print()
-        if continuar:
-            quemComeca()
-        else:
-            print("Saindo...")
 
 
 def servidor(player):
@@ -85,7 +50,7 @@ def servidor(player):
 
             if player == "1":
                 # Turno do servidor
-                jogada(tabuleiro)
+                jogada(tabuleiro, 'x')
 
                 tabuleiro.print()
 
@@ -111,12 +76,12 @@ def servidor(player):
                 tabuleiro.print()
 
                 # Verifica condicao de vitoria/derrota ou empate
-                if result(tabuleiro.finish()):
+                if tabuleiro.result(tabuleiro.finish(), msgVitoria, msgDerrota):
                     print('Encerrando o cliente\n')
                     stop = True
                     break
 
-                jogada(tabuleiro)
+                jogada(tabuleiro, 'x')
 
                 tabuleiro.print()
                 print('------------------')
@@ -125,7 +90,7 @@ def servidor(player):
                 connection.sendall(tabuleiro.save().encode('utf-8'))
 
                 # Verifica condicao de vitoria/derrota ou empate
-                if result(tabuleiro.finish()):
+                if tabuleiro.result(tabuleiro.finish(), msgVitoria, msgDerrota):
                     print('Encerrando o cliente\n')
                     stop = True
                     break
@@ -135,4 +100,4 @@ def servidor(player):
             connection.close()
 
 
-menu()
+menu(quemComeca)

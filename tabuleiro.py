@@ -97,6 +97,20 @@ class Tabuleiro:
             return 0
 
     # -------------------------------------------------
+    def result(self, status, status1Msg, status2Msg):
+        if status == 1:
+            print(status1Msg)
+            return True
+        elif status == 2:
+            print(status2Msg)
+            return True
+        elif status == 9:
+            print("Jogo empatou")
+            return True
+
+        return False
+
+    # -------------------------------------------------
     def move(self, row, col, piece):
         """
         Faz uma jogada no tabuleiro, nas posições dadas.
