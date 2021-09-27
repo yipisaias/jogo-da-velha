@@ -31,14 +31,28 @@ def jogada(tabuleiro):
             print('Linha ou coluna inválida. Tente novamente.')
 
 
-print("Qual jogador começa?")
-print("1. Eu")
-print("2. Meu adversário")
-quemComeca = int(input())
-while quemComeca != 1 and quemComeca != 2:
-    print('Opção inválida. Tente novamente.')
-    quemComeca = int(input())
-print()
+def quemComeca():
+    print("Qual jogador começa?")
+    print("1. Eu")
+    print("2. Meu adversário")
+    player = str(input())
+    while player != "1" and player != "2":
+        print('Opção inválida. Tente novamente.')
+        player = str(input())
+    print()
+    servidor(player)
+
+
+def menu():
+    continuar = 1
+    while continuar:
+        continuar = int(input("1. Novo jogo \n" +
+                              "0. Sair \n"))
+        print()
+        if continuar:
+            quemComeca()
+        else:
+            print("Saindo...")
 
 
 def servidor(player):
@@ -52,8 +66,8 @@ def servidor(player):
     # Fica ouvindo por conexoes
     serverSocket.listen(1)
 
-    while True:
-
+    stop = False
+    while not stop:
         print('Aguardando a conexao do adversário')
         connection, client_address = serverSocket.accept()
 
@@ -66,9 +80,10 @@ def servidor(player):
             print('------------------')
             tabuleiro.print()
 
-            connection.sendall(''.join(str(player)).encode('utf-8'))
+            # Envia para o cliente qual jogador comeca
+            connection.sendall(''.join(player).encode('utf-8'))
 
-            if player == 1:
+            if player == "1":
                 # Turno do servidor
                 jogada(tabuleiro)
 
@@ -97,7 +112,8 @@ def servidor(player):
 
                 # Verifica condicao de vitoria/derrota ou empate
                 if result(tabuleiro.finish()):
-                    print('Encerrando o cliente')
+                    print('Encerrando o cliente\n')
+                    stop = True
                     break
 
                 jogada(tabuleiro)
@@ -110,7 +126,8 @@ def servidor(player):
 
                 # Verifica condicao de vitoria/derrota ou empate
                 if result(tabuleiro.finish()):
-                    print('Encerrando o cliente')
+                    print('Encerrando o cliente\n')
+                    stop = True
                     break
 
         finally:
@@ -118,4 +135,4 @@ def servidor(player):
             connection.close()
 
 
-servidor(quemComeca)
+menu()

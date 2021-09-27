@@ -1,4 +1,5 @@
 from socket import socket, AF_INET, SOCK_STREAM
+import msvcrt
 from tabuleiro import Tabuleiro
 
 
@@ -67,7 +68,8 @@ try:
 
             # Verifica condicao de vitoria/derrota ou empate
             if result(tabuleiro.finish()):
-                input("Pressione qualquer tecla para sair...")
+                print("Pressione qualquer tecla para sair...")
+                msvcrt.getch()
                 break
 
             # Turno do cliente
@@ -81,7 +83,8 @@ try:
 
             # Verifica condicao de vitoria/derrota ou empate
             if result(tabuleiro.finish()):
-                input("Pressione qualquer tecla para sair...")
+                print("Pressione qualquer tecla para sair...")
+                msvcrt.getch()
                 break
 
         else:
