@@ -1,3 +1,7 @@
+msgVitoria = "Parabéns! Você venceu!"
+msgDerrota = "Seu adversário venceu!"
+
+
 def jogada(tabuleiro, simbolo):
     nok = True
     while nok:

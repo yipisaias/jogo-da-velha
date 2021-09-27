@@ -1,11 +1,7 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from tabuleiro import Tabuleiro
-from jogada import jogada
+from jogada import jogada, msgVitoria, msgDerrota
 from menu import menu
-
-
-msgVitoria = "Parabéns! Você venceu!"
-msgDerrota = "Seu adversário venceu!"
 
 
 def quemComeca():
@@ -33,7 +29,7 @@ def servidor(player):
 
     stop = False
     while not stop:
-        print('Aguardando a conexao do adversário')
+        print('Aguardando a conexão do adversário')
         connection, client_address = serverSocket.accept()
 
         try:
