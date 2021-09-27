@@ -1,11 +1,7 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from tabuleiro import Tabuleiro
-from jogada import jogada
+from jogada import jogada, msgVitoria, msgDerrota
 from menu import menu
-
-
-msgVitoria = "Parabéns! Você venceu!"
-msgDerrota = "Seu adversário venceu!"
 
 
 def cliente():
@@ -13,10 +9,17 @@ def cliente():
     clientSocket = socket(AF_INET, SOCK_STREAM)
 
     # Connect the socket to the port where the server is listening
-    server_address = ('localhost', 5000)
-    print('Conectando ao servidor {} na porta {}'.format(
-        server_address[0], server_address[1]))
-    clientSocket.connect(server_address)
+    conectou = False
+    while not conectou:
+        server_address = str(input('IP do servidor: '))
+        server_address = (server_address, 5000)
+        print('Conectando ao servidor {} na porta {}'.format(
+            server_address[0], server_address[1]))
+        try:
+            clientSocket.connect(server_address)
+            conectou = True
+        except:
+            print("Falha ao estabelecer conexão com o servidor.\n")
 
     # Cria um tabuleiro de jogo vazio
     tabuleiro = Tabuleiro()
