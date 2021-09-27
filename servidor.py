@@ -1,4 +1,5 @@
 from socket import socket, AF_INET, SOCK_STREAM
+import socket as sckt
 from tabuleiro import Tabuleiro
 from jogada import jogada, msgVitoria, msgDerrota
 from menu import menu
@@ -10,7 +11,10 @@ def quemComeca():
     print("2. Meu adversário")
     player = str(input())
     while player != "1" and player != "2":
-        print('Opção inválida. Tente novamente.')
+        print('\nOpção inválida. Tente novamente.')
+        print("Qual jogador começa?")
+        print("1. Eu")
+        print("2. Meu adversário")
         player = str(input())
     print()
     servidor(player)
@@ -21,7 +25,9 @@ def servidor(player):
     serverSocket = socket(AF_INET, SOCK_STREAM)
 
     # Faz o bind no endereco e porta
-    server_address = ('localhost', 5000)
+    hostname = sckt.gethostname()
+    hostIP = sckt.gethostbyname(hostname)
+    server_address = (hostIP, 5000)
     serverSocket.bind(server_address)
 
     # Fica ouvindo por conexoes
