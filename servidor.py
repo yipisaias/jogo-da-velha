@@ -8,13 +8,13 @@ def quemComeca():
     print("Qual jogador começa?")
     print("1. Eu")
     print("2. Meu adversário")
-    player = str(input())
+    player = input()
     while player != "1" and player != "2":
         print('\nOpção inválida. Tente novamente.')
         print("Qual jogador começa?")
         print("1. Eu")
         print("2. Meu adversário")
-        player = str(input())
+        player = input()
     print()
     servidor(player)
 
@@ -30,8 +30,8 @@ def servidor(player):
     # Fica ouvindo por conexoes
     serverSocket.listen(1)
 
-    stop = False
-    while not stop:
+    stopListen = False
+    while not stopListen:
         print('Aguardando a conexão do adversário')
         connection, client_address = serverSocket.accept()
 
@@ -53,17 +53,17 @@ def servidor(player):
 
                 tabuleiro.print()
 
-                # Envia o tabuleiro para o jogador
+                # Envia o tabuleiro para o adversario
                 connection.sendall(tabuleiro.save().encode('utf-8'))
 
             # Processa em loop
             while tabuleiro.finish() == 0:
                 print("Aguardando turno do adversário...")
 
-                # Recebe a jogada do jogador
+                # Recebe a jogada do adversario
                 data = connection.recv(1024)
 
-                # Checa se a conexao do jogador foi terminada
+                # Checa se a conexao do adversario foi terminada
                 if not data:
                     print('Adversário se foi. :(')
                     break
@@ -77,7 +77,7 @@ def servidor(player):
                 # Verifica condicao de vitoria/derrota ou empate
                 if tabuleiro.result(tabuleiro.finish(), msgVitoria, msgDerrota):
                     print('Encerrando o cliente\n')
-                    stop = True
+                    stopListen = True
                     break
 
                 jogada(tabuleiro, 'x')
@@ -85,17 +85,17 @@ def servidor(player):
                 tabuleiro.print()
                 print('------------------')
 
-                # Envia o tabuleiro para o jogador
+                # Envia o tabuleiro para o adversario
                 connection.sendall(tabuleiro.save().encode('utf-8'))
 
                 # Verifica condicao de vitoria/derrota ou empate
                 if tabuleiro.result(tabuleiro.finish(), msgVitoria, msgDerrota):
                     print('Encerrando o cliente\n')
-                    stop = True
+                    stopListen = True
                     break
 
         finally:
-            # Clean up the connection
+            # Fecha a conexao
             connection.close()
 
 

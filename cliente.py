@@ -5,13 +5,13 @@ from menu import menu
 
 
 def cliente():
-    # Create a TCP/IP socket
+    # Cria o socket TCP/IP
     clientSocket = socket(AF_INET, SOCK_STREAM)
 
-    # Connect the socket to the port where the server is listening
+    # Conecta o socket na porta onde o servidor esta escutando
     conectou = False
     while not conectou:
-        server_address = str(input('IP do servidor: '))
+        server_address = input('IP do servidor: ')
         server_address = (server_address, 5000)
         print('Conectando ao servidor {} na porta {}'.format(
             server_address[0], server_address[1]))
@@ -32,13 +32,13 @@ def cliente():
 
             tabuleiro.print()
 
-            # Envia o tabuleiro para o jogador
+            # Envia o tabuleiro para o adversario
             clientSocket.sendall(tabuleiro.save().encode('utf-8'))
 
         while tabuleiro.finish() == 0:
             print("Aguardando turno do adversário...")
 
-            # Recebe a jogada do servidor
+            # Recebe a jogada do adversario
             data = clientSocket.recv(1024)
             if data:
                 tabuleiro.restore(data.decode('utf-8'))
@@ -56,7 +56,7 @@ def cliente():
                 tabuleiro.print()
                 print('------------------')
 
-                # Envia o tabuleiro para o servidor
+                # Envia o tabuleiro para o adversario
                 clientSocket.sendall(tabuleiro.save().encode('utf-8'))
 
                 # Verifica condicao de vitoria/derrota ou empate
