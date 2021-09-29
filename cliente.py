@@ -11,8 +11,9 @@ def cliente():
     # Conecta o socket na porta onde o servidor esta escutando
     conectou = False
     while not conectou:
-        server_address = input('IP do servidor: ')
-        server_address = (server_address, 5000)
+        server_IP = input('IP do servidor: ')
+        server_port = int(input('Porta: '))
+        server_address = (server_IP, server_port)
         print('Conectando ao servidor {} na porta {}'.format(
             server_address[0], server_address[1]))
         try:
