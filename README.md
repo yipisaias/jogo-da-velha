@@ -1,17 +1,33 @@
 # jogo-da-velha
 
-Jogo da velha em Python
+Jogo da velha em rede feito em Python, utilizando protocolo TCP e arquitetura híbrida.
 
 Baseado em: https://pt.stackoverflow.com/questions/168060/sockets-jogo-da-velha-jogo-do-galo-multiplayer <br/>
 e em: https://www.pythonprogressivo.net/2018/10/Como-Criar-Jogo-Velha-Python.html
 
-Necessário instalar a biblioteca numpy:
+## Quick-Start
+Instale os requisitos (dependências):
 
-```python
-  pip install numpy
 ```
+  pip install -r requirements.txt
+```
+Após isso, reiniciar a IDE caso esteja aberta.
 
-Após isso, reiniciar a IDE e ~~(com sorte)~~ o jogo rodará em sua máquina :)<br/>
-<br/>
-Para gerar e rodar arquivos executáveis, siga as instruções do [PyInstaller](http://www.pyinstaller.org/).<br/>
-O executável é gerado dentro da pasta **dist**.
+Para gerar arquivos executáveis, use os comandos:
+```
+  pyinstaller .\servidor.py
+```
+```
+  pyinstaller .\cliente.py
+```
+Os executáveis são gerados dentro da pasta **dist**.<br/>
+Para mais informações, consulte o site do [PyInstaller](http://www.pyinstaller.org/).
+
+## Executando diretamente pelo prompt/terminal
+
+```
+  python .\servidor.py
+```
+```
+  python .\cliente.py
+```
