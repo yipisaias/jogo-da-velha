@@ -33,3 +33,8 @@ Para mais informações, consulte o site do [PyInstaller](http://www.pyinstaller
 ```
   python cliente.py
 ```
+
+## Vídeo sobre o trabalho
+Clique na imagem abaixo para assistir o vídeo.
+
+[![Vídeo do jogo](https://img.youtube.com/vi/MqAX5lmx3T8/maxresdefault.jpg)](https://youtu.be/MqAX5lmx3T8)
