@@ -32,3 +32,17 @@ def jogada(tabuleiro, simbolo):
         except:
             nok = True
             print("Linha ou coluna inválida. Tente novamente.")
+
+
+def revanche():
+    while True:
+        rev = input("Jogar outra partida contra este adversário?\n" +
+                    "s. Sim\n" +
+                    "n. Não\n")
+        rev = rev.lower()
+        if rev == 's' or rev == 'sim':
+            return True
+        elif rev == 'n' or rev == 'nao' or rev == 'não':
+            return False
+        else:
+            print("Opção inválida! Tente novamente.")

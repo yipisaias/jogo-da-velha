@@ -1,6 +1,6 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from tabuleiro import Tabuleiro
-from jogada import jogada, msgVitoria, msgDerrota
+from jogada import jogada, revanche, msgVitoria, msgDerrota
 from menu import menu
 
 
@@ -22,10 +22,13 @@ def cliente():
         except:
             print("Falha ao estabelecer conexão com o servidor.\n")
 
-    # Cria um tabuleiro de jogo vazio
-    tabuleiro = Tabuleiro()
-    tabuleiro.print()
-    try:
+    jogaRevanche = True
+    while jogaRevanche:
+        # Cria um tabuleiro de jogo vazio
+        tabuleiro = Tabuleiro()
+        tabuleiro.print()
+
+        # Recebe quem comeca
         response = clientSocket.recv(1024).decode('utf-8')
         if response == "2":
             # Turno do cliente
@@ -41,35 +44,80 @@ def cliente():
 
             # Recebe a jogada do adversario
             data = clientSocket.recv(1024)
-            if data:
-                tabuleiro.restore(data.decode('utf-8'))
-
-                print('O adversário jogou:')
-                tabuleiro.print()
-
-                # Verifica condicao de vitoria/derrota ou empate
-                if tabuleiro.result(tabuleiro.finish(), msgDerrota, msgVitoria):
-                    break
-
-                # Turno do cliente
-                jogada(tabuleiro, 'o')
-
-                tabuleiro.print()
-                print('------------------')
-
-                # Envia o tabuleiro para o adversario
-                clientSocket.sendall(tabuleiro.save().encode('utf-8'))
-
-                # Verifica condicao de vitoria/derrota ou empate
-                if tabuleiro.result(tabuleiro.finish(), msgDerrota, msgVitoria):
-                    break
-
-            else:
+            if not data:
+                print('Adversário se foi. :(')
+                jogaRevanche = False
+                print('Encerrando o cliente\n')
+                clientSocket.close()
                 break
 
-    finally:
-        print('Encerrando o cliente\n')
-        clientSocket.close()
+            tabuleiro.restore(data.decode('utf-8'))
+
+            print('O adversário jogou:')
+            tabuleiro.print()
+
+            # Verifica condicao de vitoria/derrota ou empate
+            if tabuleiro.result(tabuleiro.finish(), msgDerrota, msgVitoria):
+                rev = revanche()
+                clientSocket.sendall('{}'.format(rev).encode('utf-8'))
+                if rev:
+                    print("Aguardando resposta do servidor...")
+                    try:
+                        res = clientSocket.recv(1024)
+                        # Checa se a conexao do adversario foi terminada
+                        if not eval(res.decode('utf-8')):
+                            print('Adversário se foi. :(')
+                            jogaRevanche = False
+                            print('Encerrando o cliente\n')
+                            clientSocket.close()
+                        else:
+                            print("Aguardando definição de quem começa...")
+                    except:
+                        print('Adversário se foi. :(')
+                        jogaRevanche = False
+                        print('Encerrando o cliente\n')
+                        clientSocket.close()
+                else:
+                    jogaRevanche = False
+                    print('Encerrando o cliente\n')
+                    clientSocket.close()
+                break
+
+            # Turno do cliente
+            jogada(tabuleiro, 'o')
+
+            tabuleiro.print()
+            print('------------------')
+
+            # Envia o tabuleiro para o adversario
+            clientSocket.sendall(tabuleiro.save().encode('utf-8'))
+
+            # Verifica condicao de vitoria/derrota ou empate
+            if tabuleiro.result(tabuleiro.finish(), msgDerrota, msgVitoria):
+                rev = revanche()
+                clientSocket.sendall('{}'.format(rev).encode('utf-8'))
+                if rev:
+                    print("Aguardando resposta do servidor...")
+                    try:
+                        res = clientSocket.recv(1024)
+                        # Checa se a conexao do adversario foi terminada
+                        if not eval(res.decode('utf-8')):
+                            print('Adversário se foi. :(')
+                            jogaRevanche = False
+                            print('Encerrando o cliente\n')
+                            clientSocket.close()
+                        else:
+                            print("Aguardando definição de quem começa...")
+                    except:
+                        print('Adversário se foi. :(')
+                        jogaRevanche = False
+                        print('Encerrando o cliente\n')
+                        clientSocket.close()
+                else:
+                    jogaRevanche = False
+                    print('Encerrando o cliente\n')
+                    clientSocket.close()
+                break
 
 
 menu(cliente)

@@ -1,6 +1,6 @@
 from socket import socket, AF_INET, SOCK_STREAM
 from tabuleiro import Tabuleiro
-from jogada import jogada, msgVitoria, msgDerrota
+from jogada import jogada, revanche, msgVitoria, msgDerrota
 from menu import menu
 
 
@@ -16,10 +16,12 @@ def quemComeca():
         print("2. Meu adversário")
         player = input()
     print()
-    servidor(player)
+    return player
 
 
-def servidor(player):
+def servidor():
+    player = quemComeca()
+
     # Cria o socket TCP/IP
     serverSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -35,9 +37,10 @@ def servidor(player):
         print('Aguardando a conexão do adversário')
         connection, client_address = serverSocket.accept()
 
-        try:
-            print('Adversário chegou! :)')
+        print('Adversário chegou! :)')
 
+        jogaRevanche = True
+        while jogaRevanche:
             # Cria um tabuleiro de jogo vazio
             tabuleiro = Tabuleiro()
 
@@ -66,6 +69,10 @@ def servidor(player):
                 # Checa se a conexao do adversario foi terminada
                 if not data:
                     print('Adversário se foi. :(')
+                    stopListen = True
+                    jogaRevanche = False
+                    print('Encerrando a conexão\n')
+                    connection.close()
                     break
 
                 # Converte para string e restaura no tabuleiro
@@ -76,8 +83,32 @@ def servidor(player):
 
                 # Verifica condicao de vitoria/derrota ou empate
                 if tabuleiro.result(tabuleiro.finish(), msgVitoria, msgDerrota):
-                    print('Encerrando o cliente\n')
-                    stopListen = True
+                    rev = revanche()
+                    connection.sendall('{}'.format(rev).encode('utf-8'))
+                    if rev:
+                        print("Aguardando resposta do adversário...")
+                        try:
+                            res = connection.recv(1024)
+                            # Checa se a conexao do adversario foi terminada
+                            if not eval(res.decode('utf-8')):
+                                print('Adversário se foi. :(')
+                                stopListen = True
+                                jogaRevanche = False
+                                print('Encerrando a conexão\n')
+                                connection.close()
+                            else:
+                                player = quemComeca()
+                        except:
+                            print('Adversário se foi. :(')
+                            stopListen = True
+                            jogaRevanche = False
+                            print('Encerrando a conexão\n')
+                            connection.close()
+                    else:
+                        stopListen = True
+                        jogaRevanche = False
+                        print('Encerrando a conexão\n')
+                        connection.close()
                     break
 
                 jogada(tabuleiro, 'x')
@@ -90,13 +121,33 @@ def servidor(player):
 
                 # Verifica condicao de vitoria/derrota ou empate
                 if tabuleiro.result(tabuleiro.finish(), msgVitoria, msgDerrota):
-                    print('Encerrando o cliente\n')
-                    stopListen = True
+                    rev = revanche()
+                    connection.sendall('{}'.format(rev).encode('utf-8'))
+                    if rev:
+                        print("Aguardando resposta do adversário...")
+                        try:
+                            res = connection.recv(1024)
+                            # Checa se a conexao do adversario foi terminada
+                            if not eval(res.decode('utf-8')):
+                                print('Adversário se foi. :(')
+                                stopListen = True
+                                jogaRevanche = False
+                                print('Encerrando a conexão\n')
+                                connection.close()
+                            else:
+                                player = quemComeca()
+                        except:
+                            print('Adversário se foi. :(')
+                            stopListen = True
+                            jogaRevanche = False
+                            print('Encerrando a conexão\n')
+                            connection.close()
+                    else:
+                        stopListen = True
+                        jogaRevanche = False
+                        print('Encerrando a conexão\n')
+                        connection.close()
                     break
 
-        finally:
-            # Fecha a conexao
-            connection.close()
 
-
-menu(quemComeca)
+menu(servidor)
